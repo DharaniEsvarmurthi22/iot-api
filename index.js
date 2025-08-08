@@ -1,16 +1,18 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const app = express();
 
+const app = express();
 app.use(express.json());
 
-// MongoDB connection string from environment variable
-const uri = process.env.MONGO_URI;
+// Get MongoDB connection string from environment variable
+const uri = process.env.MONGO_URL;
+
 if (!uri) {
-    console.error('Error: MONGO_URI environment variable not set');
+    console.error('Error: MONGO_URL environment variable not set');
     process.exit(1);
 }
 
+// Connect to MongoDB
 mongoose.connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -21,7 +23,7 @@ mongoose.connect(uri, {
         process.exit(1);
     });
 
-// Define a simple Mongoose schema for your data points
+// Define schema for the 8 float points
 const dataSchema = new mongoose.Schema({
     point1: Number,
     point2: Number,
@@ -51,16 +53,18 @@ app.post('/api/data', async (req, res) => {
 app.get('/api/data/last', async (req, res) => {
     try {
         const lastData = await DataModel.findOne().sort({ createdAt: -1 });
-        if (!lastData) return res.status(404).json({ message: 'No data found' });
+        if (!lastData) {
+            return res.status(404).json({ message: 'No data found' });
+        }
         res.json(lastData);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// Use the port from environment or fallback to 3000 for local testing
+// Use environment port or default to 3000
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log('Server running on port { PORT }');
+    console.log('Server running on port ${PORT}');
 });
