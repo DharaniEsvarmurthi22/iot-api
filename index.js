@@ -11,6 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 const uri = process.env.MONGO_URI;
+console.log('MongoDB:', uri);
 const port = process.env.PORT || 5000;
 
 mongoose.connect(uri)
