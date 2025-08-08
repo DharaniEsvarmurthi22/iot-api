@@ -50,7 +50,7 @@ app.post('/api/data', async (req, res) => {
 });
 
 // GET route to fetch last inserted data
-app.get('/api/data/last', async (req, res) => {
+app.get('/api/latest', async (req, res) => {
     try {
         const lastData = await DataModel.findOne().sort({ createdAt: -1 });
         if (!lastData) {
